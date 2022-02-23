@@ -6,7 +6,8 @@
 
 // Initiliase motor object
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
-Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
+Adafruit_DCMotor *leftMotor = AFMS.getMotor(1);
+Adafruit_DCMotor *rightMotor = AFMS.getMotor(2);
 
 void setup() {
   Serial.begin(9600);           // set up Serial library at 9600 bps
@@ -18,42 +19,13 @@ void setup() {
     while (1);
   }
   Serial.println("Motor Shield found.");
-
-  // Set the speed to start, from 0 (off) to 255 (max speed)
-  myMotor->setSpeed(150);
-  myMotor->run(FORWARD);
-  // turn on motor
-  myMotor->run(RELEASE);
 }
 
 void loop() {
-  uint8_t i;
+    // Set the speed to start, from 0 (off) to 255 (max speed)
+  leftMotor->run(FORWARD);
+  leftMotor->setSpeed(255);
+  rightMotor->run(FORWARD);
+  rightMotor->setSpeed(255);
 
-  Serial.print("tick");
-
-  myMotor->run(FORWARD);
-  for (i=0; i<255; i++) {
-    myMotor->setSpeed(i);
-    delay(10);
-  }
-  for (i=255; i!=0; i--) {
-    myMotor->setSpeed(i);
-    delay(10);
-  }
-
-  Serial.print("tock");
-
-  myMotor->run(BACKWARD);
-  for (i=0; i<255; i++) {
-    myMotor->setSpeed(i);
-    delay(10);
-  }
-  for (i=255; i!=0; i--) {
-    myMotor->setSpeed(i);
-    delay(10);
-  }
-
-  Serial.print("tech");
-  myMotor->run(RELEASE);
-  delay(1000);
 }
