@@ -5,24 +5,24 @@
 #include <SPI.h>
 
 #define leftIR A0
-#define MiddleIR A1
+#define MiddleIR A3
 #define RightIR A2
-#define IRthresh 250
+#define IRthresh 200
 #define IRmargin 50
 
-#define SpeedStraight 150
-#define RotationSpeedLow 80
-#define RotationSpeedHigh 100
+#define SpeedStraight 200
+#define RotationSpeedLow 0
+#define RotationSpeedHigh 255
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-Adafruit_DCMotor *leftMotor = AFMS.getMotor(1);
-Adafruit_DCMotor *rightMotor = AFMS.getMotor(2);
+Adafruit_DCMotor *leftMotor = AFMS.getMotor(2);
+Adafruit_DCMotor *rightMotor = AFMS.getMotor(1);
 
 bool digLeft = false;
 bool digMiddle = true;
 bool digRight = false;
 
-
+int no_read_counter = 0;
 
 
 void setup() {
@@ -74,30 +74,63 @@ void loop() {
   // Serial.println(anaRight);
   // Serial.println(digRight);
 
+  Serial.print("Ana:");
+  Serial.print(anaLeft);
+  Serial.print("\t");
+  Serial.print(anaMiddle);
+  Serial.print("\t");
+  Serial.print(anaRight);
+  Serial.print("\n");
+
+  Serial.print("Dig:");
   Serial.print(digLeft);
   Serial.print(digMiddle);
   Serial.print(digRight);
   Serial.print("\n");
 
-  delay(1000);
-  // if (digLeft==0 && digMiddle==1 && digRight==0) {
-  //   leftMotor->setSpeed(SpeedStraight);
-  //   rightMotor->setSpeed(SpeedStraight);  
-  // }
-  // else if (digLeft==1 && digRight==0) {
-  //   leftMotor->setSpeed(RotationSpeedLow);
-  //   rightMotor->setSpeed(RotationSpeedHigh);
-  // }
+  Serial.print("-----------------");
+  Serial.print("\n");
+  //digMiddle = 1;
+  
+ if (digLeft==0 && digMiddle==1 && digRight==0) {
+    Serial.print("Drive_forward\n");
+    leftMotor->run(FORWARD);
+    leftMotor->setSpeed(SpeedStraight);
+    rightMotor->run(FORWARD);
+    rightMotor->setSpeed(SpeedStraight);  
+  }
+  else if (digLeft==1 && digRight==0) {
+    Serial.print("Drive_right\n");
+    leftMotor->run(FORWARD);
+    leftMotor->setSpeed(RotationSpeedLow);
+    rightMotor->run(FORWARD);
+    rightMotor->setSpeed(RotationSpeedHigh);
+  }
 
-  // else if (digLeft==0 && digRight==1) {
-  //   leftMotor->setSpeed(RotationSpeedLow);
-  //   rightMotor->setSpeed(RotationSpeedHigh);
-  // }
+  else if (digLeft==0 && digRight==1) {
+    Serial.print("Drive_left\n");
+    leftMotor->run(FORWARD);
+    leftMotor->setSpeed(RotationSpeedHigh);
+    rightMotor->run(FORWARD);
+    rightMotor->setSpeed(RotationSpeedLow);
+  }
 
-  // else{
-  //   leftMotor->run(RELEASE);
-  //   leftMotor->setSpeed(0);
-  //   rightMotor->run(RELEASE);
-  //   rightMotor->setSpeed(0);
-  // }
+  else{
+    no_read_counter++;
+    if(no_read_counter<5)
+    {
+      Serial.print("Drive_forward\n");
+      leftMotor->run(FORWARD);
+      leftMotor->setSpeed(SpeedStraight);
+      rightMotor->run(FORWARD);
+      rightMotor->setSpeed(SpeedStraight); 
+    }else{
+      leftMotor->run(RELEASE);
+      leftMotor->setSpeed(0);
+      rightMotor->run(RELEASE);
+      rightMotor->setSpeed(0);
+      no_read_counter = 0;
+    }
+    
+  }
 }
