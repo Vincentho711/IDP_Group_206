@@ -1,0 +1,25 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#include <Arduino.h>
+// Debug flags
+#define LINE_SENSOR_DEBUG 0
+
+//Pins
+#define LINE_SENSOR_LEFT_PIN A0
+#define LINE_SENSOR_MIDDLE_PIN A1
+#define LINE_SENSOR_RIGHT_PIN A2
+#define LEFT_MOTOR_PIN 2
+#define RIGHT_MOTOR_PIN 1
+
+
+// Line sensor sentivity
+#define LINE_SENSOR_LEFT_THRESHOLD 200
+#define LINE_SENSOR_LEFT_MARGIN 50
+#define LINE_SENSOR_MIDDLE_THRESHOLD 200
+#define LINE_SENSOR_MIDDLE_MARGIN 50
+#define LINE_SENSOR_RIGHT_THRESHOLD 200
+#define LINE_SENSOR_RIGHT_MARGIN 50
+
+
+#endif
