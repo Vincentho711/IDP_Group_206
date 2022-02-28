@@ -5,16 +5,17 @@
 #include <SPI.h>
 #include <constants.hpp>
 
-class Motor{
-    public:
+class Motor
+{
+public:
     // Attribute
     Adafruit_DCMotor *left_motor;
     Adafruit_DCMotor *right_motor;
     Motor();
-    private:
     bool Line_following(uint8_t line_readings);
 
-        
+private:
+    
 };
 
 #endif

@@ -3,14 +3,14 @@
 
 #include <Arduino.h>
 // Debug flags
-#define LINE_SENSOR_DEBUG 0
+#define LINE_SENSOR_DEBUG 1
 
 //Pins
 #define LINE_SENSOR_LEFT_PIN A0
-#define LINE_SENSOR_MIDDLE_PIN A1
+#define LINE_SENSOR_MIDDLE_PIN A3
 #define LINE_SENSOR_RIGHT_PIN A2
-#define LEFT_MOTOR_PIN 2
-#define RIGHT_MOTOR_PIN 1
+#define LEFT_MOTOR_PIN 1
+#define RIGHT_MOTOR_PIN 2
 
 
 // Line sensor sentivity
@@ -20,6 +20,11 @@
 #define LINE_SENSOR_MIDDLE_MARGIN 50
 #define LINE_SENSOR_RIGHT_THRESHOLD 200
 #define LINE_SENSOR_RIGHT_MARGIN 50
+
+// Motor
+#define STRAIGHT_SPEED 200
+#define ROTATION_SPEED_LOW 0
+#define ROTATION_SPEED_HIGH 255
 
 
 #endif
