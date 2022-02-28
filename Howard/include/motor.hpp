@@ -12,6 +12,8 @@ class Motor{
     Adafruit_DCMotor *right_motor;
     Motor();
     private:
+    bool Line_following(uint8_t line_readings);
+
         
 };
 
