@@ -12,15 +12,20 @@ void loop() {
   switch (phase) {
     case PHASE1:
       // Line following
-      int count = 0;
-      // Ignore 111 once
-      while (count<=1) {
+      while (true) {
         // line_following() returns false when sensors read 111
-        if (line_follwing()==false) count++;
+        if (line_follwing()==false) break;
       }
       phase = PHASE(phase+1);
       break;
     case PHASE2:
+      // Going up the ramp
+      while (true) {
+        // approaching_block() is a line following function but returns false when the distance sensor reads certain distance
+        if (ramp_climbing()==false) break;
+      }
+      phase = PHASE(phase+1);
+    case PHASE3:
       while (true) {
         // approaching_block() is a line following function but returns false when the distance sensor reads certain distance
         if (approaching_block()==false) break;

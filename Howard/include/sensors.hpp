@@ -11,8 +11,13 @@ class Line_sensor{
         
     private:
 
+};
 
-
+class Color_sensor{
+    public:
+        Color_sensor();
+        bool is_red();
+    private:
 };
 
 #endif

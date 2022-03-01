@@ -11,6 +11,10 @@ public:
     Motor();
     bool Line_following(uint8_t line_readings);
     void go_forward();
+    void go_backward(int duration);
+    void turn_left_90();
+    void turn_right_90();
+    void turn_180();
 
 private:
     Adafruit_MotorShield *motorShield;

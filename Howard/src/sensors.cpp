@@ -82,3 +82,32 @@ uint8_t Line_sensor::get_line_readings()
 
     return line_reading;
 }
+
+
+Color_sensor::Color_sensor()
+{
+    pinMode(COLOR_SENSOR_PIN, INPUT);
+}
+
+bool Color_sensor::is_red()
+{
+    int reading;
+    int last_reading = 0;
+
+    int count = 0;
+    while(count<10) // Check for 10 seconds
+    {
+        reading = analogRead(COLOR_SENSOR_PIN);
+        Serial.println("...");
+        delay(1000);
+        if (reading>last_reading+15 && last_reading!=0) {
+            Serial.println("Red detected");
+            return true;
+        }
+        last_reading = reading;
+        count ++;
+    }
+    Serial.println("Red not detected");
+    return false;
+
+}
