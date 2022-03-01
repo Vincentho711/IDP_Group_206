@@ -1,20 +1,9 @@
 #include "motor.hpp"
 
-Motor::Motor()
+Motor::Motor(Adafruit_DCMotor *leftMotor, Adafruit_DCMotor *rightMotor) : left_motor(leftMotor), right_motor(rightMotor)
 {
-    // motorShield = new Adafruit_MotorShield();
-    Adafruit_MotorShield AFMS = Adafruit_MotorShield();
+    motor_shield_found = true;
 
-    if (!AFMS.begin())
-    {
-        motor_shield_found = false;
-    }
-    else
-    {
-        motor_shield_found = true;
-        left_motor = AFMS.getMotor(LEFT_MOTOR_PIN);
-        right_motor = AFMS.getMotor(RIGHT_MOTOR_PIN);
-    }
 };
 
 void Motor::go_forward()

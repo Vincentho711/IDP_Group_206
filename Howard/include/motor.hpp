@@ -8,7 +8,7 @@
 class Motor
 {
 public:
-    Motor();
+    Motor(Adafruit_DCMotor *leftMotor, Adafruit_DCMotor *rightMotor);
     bool Line_following(uint8_t line_readings);
     void go_forward();
     void go_backward(int duration);
