@@ -9,8 +9,8 @@
 #define LINE_SENSOR_LEFT_PIN A0
 #define LINE_SENSOR_MIDDLE_PIN A3
 #define LINE_SENSOR_RIGHT_PIN A2
-#define LEFT_MOTOR_PIN 1
-#define RIGHT_MOTOR_PIN 2
+#define LEFT_MOTOR_PIN 2
+#define RIGHT_MOTOR_PIN 1
 
 
 // Line sensor sentivity
