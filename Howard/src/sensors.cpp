@@ -80,6 +80,11 @@ uint8_t Line_sensor::get_line_readings()
         delay(200);
     }
 
+    if (LINE_SENSOR_DEBUG)
+    {
+        Serial.println(line_reading);
+        delay(100);
+    }
     return line_reading;
 }
 
