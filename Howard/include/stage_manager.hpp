@@ -14,6 +14,7 @@ public:
     // States
     void home_to_ramp_1(uint8_t line_readings);
     void ramp_1(uint8_t line_readings);
+    void ramp_1_to_block(uint8_t line_readings);
     void loop(uint8_t line_readings);
   
 private:

@@ -54,4 +54,5 @@ void loop()
   // stage_manager.loop(line_reading);
   line_reading = line_sensor->get_line_readings();
   stage_manager.loop(line_reading);
+  // color_sensor->is_red();
 }

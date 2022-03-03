@@ -3,10 +3,9 @@
 Motor::Motor(Adafruit_DCMotor *leftMotor, Adafruit_DCMotor *rightMotor) : left_motor(leftMotor), right_motor(rightMotor)
 {
     motor_shield_found = true;
-
 };
 
-void Motor::go_forward()
+void Motor::go_forward(int duration)
 {
     if (motor_shield_found)
     {
@@ -15,7 +14,10 @@ void Motor::go_forward()
         left_motor->run(FORWARD);
         right_motor->setSpeed(STRAIGHT_SPEED);
         right_motor->run(FORWARD);
-    }else{
+        delay(duration);
+    }
+    else
+    {
         Serial.print("Motor shield not found.\n");
     }
 }
@@ -36,8 +38,9 @@ void Motor::go_forward_then_stop()
         right_motor->setSpeed(0);
         right_motor->run(RELEASE);
         // delay(3000);
-
-    }else{
+    }
+    else
+    {
         Serial.print("Motor shield not found.\n");
     }
 }
@@ -52,15 +55,17 @@ void Motor::go_backward(int duration)
         right_motor->setSpeed(STRAIGHT_SPEED);
         right_motor->run(BACKWARD);
         delay(duration);
-    }else{
+    }
+    else
+    {
         Serial.print("Motor shield not found.\n");
     }
 }
 
-bool Motor::Line_following(uint8_t line_readings)
+bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false)
 {
-
-    if (line_readings == 0b00000010) {
+    if (line_readings == 0b00000010)
+    {
         Serial.print("Drive_forward\n");
         left_motor->run(FORWARD);
         left_motor->setSpeed(STRAIGHT_SPEED);
@@ -68,7 +73,8 @@ bool Motor::Line_following(uint8_t line_readings)
         right_motor->setSpeed(STRAIGHT_SPEED);
         no_readings = false;
     }
-    else if (line_readings == 0b00000110 || line_readings == 0b00000100) {
+    else if (line_readings == 0b00000110 || line_readings == 0b00000100)
+    {
         Serial.print("Drive_right\n");
         left_motor->run(FORWARD);
         left_motor->setSpeed(CORRECTION_SPEED_LOW);
@@ -76,8 +82,8 @@ bool Motor::Line_following(uint8_t line_readings)
         right_motor->setSpeed(CORRECTION_SPEED_HIGH);
         no_readings = false;
     }
-
-    else if (line_readings == 0b00000011 || line_readings == 0b00000001) {
+    else if (line_readings == 0b00000011 || line_readings == 0b00000001)
+    {
         Serial.print("Drive_left\n");
         left_motor->run(FORWARD);
         left_motor->setSpeed(CORRECTION_SPEED_HIGH);
@@ -85,31 +91,44 @@ bool Motor::Line_following(uint8_t line_readings)
         right_motor->setSpeed(CORRECTION_SPEED_LOW);
         no_readings = false;
     }
-
-    else if (line_readings == 0b00000000) {
-        Serial.print("All Zeros. \n");
-        if (no_readings) {
-            Serial.print("Stop NOW.\n");
-            left_motor->run(FORWARD);
-            left_motor->setSpeed(0);
-            right_motor->run(FORWARD);
-            right_motor->setSpeed(0);
-            no_readings = false;
-            return false;
-        }
-        else {
+    else if (line_readings == 0b00000000)
+    {
+        if (ignore_all_zeroes)
+        {
+            Serial.print("Ignoring all Zeros.Drive_forward \n");
             left_motor->run(FORWARD);
             left_motor->setSpeed(STRAIGHT_SPEED);
             right_motor->run(FORWARD);
             right_motor->setSpeed(STRAIGHT_SPEED);
-            //delay(2000);
-            // no_readings = true;
         }
-
+        else
+        {
+            Serial.print("All Zeros. \n");
+            if (no_readings)
+            {
+                Serial.print("Stop NOW.\n");
+                left_motor->run(FORWARD);
+                left_motor->setSpeed(0);
+                right_motor->run(FORWARD);
+                right_motor->setSpeed(0);
+                no_readings = false;
+                return false;
+            }
+            else
+            {
+                Serial.print("In else statement. \n");
+                left_motor->run(FORWARD);
+                left_motor->setSpeed(STRAIGHT_SPEED);
+                right_motor->run(FORWARD);
+                right_motor->setSpeed(STRAIGHT_SPEED);
+                delay(2000);
+                no_readings = true;
+            }
+        }
     }
-
     // Junction detection
-    else {
+    else
+    {
         Serial.print("Junction detected\n");
         left_motor->run(RELEASE);
         left_motor->setSpeed(0);
@@ -118,12 +137,11 @@ bool Motor::Line_following(uint8_t line_readings)
         no_readings = false;
         return false;
     }
-
-    
     return true;
 }
 
-void Motor::turn_left_90() {
+void Motor::turn_left_90()
+{
     left_motor->run(RELEASE);
     right_motor->run(FORWARD);
     left_motor->setSpeed(ROTATION_SPEED_LOW);
@@ -133,7 +151,8 @@ void Motor::turn_left_90() {
     right_motor->setSpeed(0);
 }
 
-void Motor::turn_right_90() {
+void Motor::turn_right_90()
+{
     left_motor->run(FORWARD);
     right_motor->run(RELEASE);
     left_motor->setSpeed(ROTATION_SPEED_HIGH);
@@ -143,7 +162,8 @@ void Motor::turn_right_90() {
     left_motor->setSpeed(0);
 }
 
-void Motor::turn_180() {
+void Motor::turn_180()
+{
     turn_right_90();
     go_backward(1250);
     turn_right_90();
