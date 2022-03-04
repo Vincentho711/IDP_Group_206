@@ -22,7 +22,7 @@ private:
     Adafruit_DCMotor *left_motor;
     Adafruit_DCMotor *right_motor;
     bool motor_shield_found = false;
-    bool no_readings;
+    int no_readings_count;
     
 };
 

@@ -71,7 +71,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         left_motor->setSpeed(STRAIGHT_SPEED);
         right_motor->run(FORWARD);
         right_motor->setSpeed(STRAIGHT_SPEED);
-        no_readings = false;
+        no_readings_count = 0;
     }
     else if (line_readings == 0b00000110 || line_readings == 0b00000100)
     {
@@ -80,7 +80,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         left_motor->setSpeed(CORRECTION_SPEED_LOW);
         right_motor->run(FORWARD);
         right_motor->setSpeed(CORRECTION_SPEED_HIGH);
-        no_readings = false;
+        no_readings_count = 0;
     }
     else if (line_readings == 0b00000011 || line_readings == 0b00000001)
     {
@@ -89,7 +89,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         left_motor->setSpeed(CORRECTION_SPEED_HIGH);
         right_motor->run(FORWARD);
         right_motor->setSpeed(CORRECTION_SPEED_LOW);
-        no_readings = false;
+        no_readings_count = 0;
     }
     else if (line_readings == 0b00000000)
     {
@@ -100,18 +100,19 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
             left_motor->setSpeed(STRAIGHT_SPEED);
             right_motor->run(FORWARD);
             right_motor->setSpeed(STRAIGHT_SPEED);
+            no_readings_count = 0;
         }
         else
         {
             Serial.print("All Zeros. \n");
-            if (no_readings)
+            if (no_readings_count>1000)
             {
                 Serial.print("Stop NOW.\n");
                 left_motor->run(FORWARD);
                 left_motor->setSpeed(0);
                 right_motor->run(FORWARD);
                 right_motor->setSpeed(0);
-                no_readings = false;
+                no_readings_count = 0;
                 return false;
             }
             else
@@ -121,8 +122,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
                 left_motor->setSpeed(STRAIGHT_SPEED);
                 right_motor->run(FORWARD);
                 right_motor->setSpeed(STRAIGHT_SPEED);
-                delay(2000);
-                no_readings = true;
+                no_readings_count++;
             }
         }
     }
@@ -134,7 +134,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         left_motor->setSpeed(0);
         right_motor->run(RELEASE);
         right_motor->setSpeed(0);
-        no_readings = false;
+        no_readings_count = 0;
         return false;
     }
     return true;

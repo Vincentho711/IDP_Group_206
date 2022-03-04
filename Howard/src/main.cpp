@@ -9,9 +9,10 @@ Adafruit_DCMotor *rightMotor = AFMS.getMotor(RIGHT_MOTOR_PIN);
 
 Line_sensor *line_sensor;
 Color_sensor *color_sensor;
-uint8_t line_reading;
 Motor motor(leftMotor, rightMotor);
 StageManager stage_manager(motor);
+
+uint8_t line_reading;
 
 void setup()
 {
