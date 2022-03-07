@@ -19,7 +19,8 @@ void StageManager::home_to_ramp_1(uint8_t line_readings)
     Serial.print(this->current_stage+"\n");
     if (!this->motor.Line_following(line_readings,false))
     {
-        if (line_readings == 0b00000101 || line_readings == 0b00000111)
+        if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 
+        || line_readings == 0b00000101)
         {
             // Move forward slightly to prevent double detection of junction before transition
             motor.go_forward(250);
@@ -47,7 +48,8 @@ void StageManager::ramp_1(uint8_t line_readings)
     if (!this->motor.Line_following(line_readings,true))
     {
         // Transition to next stage when it reaches the second junction
-        if (line_readings == 0b00000101 || line_readings == 0b00000111)
+        if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 
+        || line_readings == 0b00000101)
         {
             // Move forward slightly to prevent double detection of junction before transition
             motor.go_forward(250);
@@ -67,7 +69,8 @@ void StageManager::ramp_1_to_block(uint8_t line_readings)
     if (!this->motor.Line_following(line_readings,false))
     {
         // Transition to next stage when it reaches the third junction
-        if (line_readings == 0b00000101 || line_readings == 0b00000111)
+        if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 
+        || line_readings == 0b00000101)
         {
             stage = &turning_at_block;
         }
@@ -102,7 +105,8 @@ void StageManager::block_to_ramp_2(uint8_t line_readings)
     if (!this->motor.Line_following(line_readings,false))
     {
         // Transition to next stage when it reaches the third junction
-        if (line_readings == 0b00000101 || line_readings == 0b00000111)
+        if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 
+        || line_readings == 0b00000101)
         {
             // Move forward slightly to prevent double detection of junction before transition
             motor.go_forward(250);
@@ -120,7 +124,8 @@ void StageManager::ramp_2(uint8_t line_readings)
     if (!this->motor.Line_following(line_readings,false))
     {
         // Transition to next stage when it reaches the third junction
-        if (line_readings == 0b00000101 || line_readings == 0b00000111)
+        if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 
+        || line_readings == 0b00000101)
         {
             // Go forward slightly
             this->motor.go_forward(1000);

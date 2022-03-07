@@ -73,7 +73,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         right_motor->setSpeed(STRAIGHT_SPEED);
         no_readings_count = 0;
     }
-    else if (line_readings == 0b00000110 || line_readings == 0b00000100)
+    else if (line_readings == 0b00000100)
     {
         Serial.print("Drive_right\n");
         left_motor->run(FORWARD);
@@ -82,7 +82,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         right_motor->setSpeed(CORRECTION_SPEED_HIGH);
         no_readings_count = 0;
     }
-    else if (line_readings == 0b00000011 || line_readings == 0b00000001)
+    else if (line_readings == 0b00000001)
     {
         Serial.print("Drive_left\n");
         left_motor->run(FORWARD);
