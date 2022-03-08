@@ -4,6 +4,7 @@
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 #include <SPI.h>
 #include "constants.hpp"
+#include <Servo.h>
 
 class Motor
 {
@@ -11,6 +12,7 @@ public:
     Motor(Adafruit_DCMotor *leftMotor, Adafruit_DCMotor *rightMotor);
     bool Line_following(uint8_t line_readings, bool ignore_all_zeroes = false);
     void go_forward(int duration);
+    void stop();
     void go_forward_then_stop();
     void go_backward(int duration);
     void turn_left_90();
@@ -23,7 +25,22 @@ private:
     Adafruit_DCMotor *right_motor;
     bool motor_shield_found = false;
     int no_readings_count;
-    
+};
+
+class ServoManager
+{
+public:
+    ServoManager(Servo &vertServo, Servo &horiServo);
+    void lift_arm();
+    void lower_arm();
+    void open_grabber();
+    void close_grabber();
+
+private:
+    Servo &vertServo;
+    Servo &horiServo;
+    bool initialised_servos;
+    bool grabber_closed;
 };
 
 #endif

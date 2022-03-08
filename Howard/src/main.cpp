@@ -7,10 +7,13 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *leftMotor = AFMS.getMotor(LEFT_MOTOR_PIN);
 Adafruit_DCMotor *rightMotor = AFMS.getMotor(RIGHT_MOTOR_PIN);
 
+Servo &vertServo; 
+Servo &horiServo;
+ServoManager &servo_manager;
 Line_sensor *line_sensor;
 Color_sensor *color_sensor;
 Motor motor(leftMotor, rightMotor);
-StageManager stage_manager(motor);
+StageManager stage_manager(motor,color_sensor,servo_manager);
 
 uint8_t line_reading;
 
@@ -18,12 +21,26 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  
+  // Setup the LED pin
+  // Moving LED
+  pinMode(MOVING_LED_PIN, OUTPUT);
+  pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  
+  // Set up motor
   if (!AFMS.begin()) {         // create with the default frequency 1.6KHz
   // if (!AFMS.begin(1000)) {  // OR with a different frequency, say 1KHz
     Serial.println("Could not find Motor Shield. Check wiring.");
     while (1);
   }
   Serial.println("Motor Shield found.");
+
+  // Set up servos
+  vertServo.attach(VERT_SERVO_PIN);
+  horiServo.attach(HORI_SERVO_PIN);
+
+
 }
 
 void loop()

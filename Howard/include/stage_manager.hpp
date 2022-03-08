@@ -3,12 +3,13 @@
 
 #include "constants.hpp"
 #include "motor.hpp"
+#include "sensors.hpp"
 
 class StageManager
 {
 public:
     // Constructor
-    StageManager(Motor &motor);
+    StageManager(Motor &motor, Color_sensor *color_sensor, ServoManager &ServoManager);
     // Function pointer of class StageManager for state machine that takes in line readings
     void (StageManager::*stage)(uint8_t);
     // States
@@ -26,8 +27,15 @@ public:
 private:
     // Keep track of the current stage
     String current_stage;
+    // Keep track of the colour of the block
+    bool is_red_block;
     // Store motor instance
     Motor motor;
+    // Store color sensor instance
+    Color_sensor color_sensor;
+    // Store servoManager instance
+    ServoManager servo_manager;
+
 
     
 };

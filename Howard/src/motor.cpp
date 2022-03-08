@@ -22,6 +22,17 @@ void Motor::go_forward(int duration)
     }
 }
 
+void Motor::stop()
+{
+    if (motor_shield_found)
+    {
+        Serial.print("Stop.\n");
+        left_motor->setSpeed(0);
+        left_motor->run(RELEASE);
+        right_motor->setSpeed(0);
+        right_motor->run(RELEASE);
+    }
+}
 void Motor::go_forward_then_stop()
 {
     if (motor_shield_found)
@@ -105,7 +116,7 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
         else
         {
             Serial.print("All Zeros. \n");
-            if (no_readings_count>1000)
+            if (no_readings_count > 1000)
             {
                 Serial.print("Stop NOW.\n");
                 left_motor->run(FORWARD);
@@ -167,4 +178,52 @@ void Motor::turn_180()
     turn_right_90();
     go_backward(1250);
     turn_right_90();
+}
+
+// Servo motor manager to
+ServoManager::ServoManager(Servo &vertServo, Servo &horiServo) : vertServo(vertServo), horiServo(horiServo)
+{
+    // Set grabber to close to start with
+    horiServo.write(GRABBER_CLOSE_ANGLE);
+    initialised_servos = true;
+    grabber_closed = false;
+};
+
+void ServoManager::lift_arm()
+{
+}
+
+void ServoManager::lower_arm()
+{
+}
+
+void ServoManager::open_grabber()
+{
+    // Check if grabber is closed first
+    if (grabber_closed)
+    {
+        Serial.print("Opening grabber. \n");
+        // Sweep from close to open grabber
+        for (int angle = GRABBER_CLOSE_ANGLE; angle <= GRABBER_OPEN_ANGLE; angle += 1)
+        {
+            horiServo.write(angle);
+            delay(10);
+        }
+        grabber_closed = false;
+    }
+}
+
+void ServoManager::close_grabber()
+{
+    if (!grabber_closed)
+    {
+        Serial.print("Closing grabber. \n");
+        // And back from open to close grabber
+        for (int angle = GRABBER_OPEN_ANGLE; angle >= GRABBER_CLOSE_ANGLE; angle -= 1)
+        {
+            horiServo.write(angle);
+            delay(10);
+        }
+        grabber_closed = true;
+    }
 }
