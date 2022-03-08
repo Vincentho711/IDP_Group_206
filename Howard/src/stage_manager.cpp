@@ -1,6 +1,6 @@
 #include "stage_manager.hpp"
 
-StageManager::StageManager(Motor &motor, Color_sensor *Color_sensor, ServoManager &servo_manager) : motor(motor), color_sensor(color_sensor),
+StageManager::StageManager(Motor &motor, Color_sensor *color_sensor, ServoManager *servo_manager) : motor(motor), color_sensor(color_sensor),
 servo_manager(servo_manager)
 {
     // Initialise first state
@@ -89,9 +89,9 @@ void StageManager::pick_block(uint8_t line_readings)
     // Stop first
     motor.stop();
     // Open grabber
-    servo_manager.open_grabber();
+    servo_manager->open_grabber();
     // Check colour of block for 10 seconds
-    if (color_sensor.is_red())
+    if (color_sensor->is_red())
     {
         is_red_block = true;
         digitalWrite(RED_LED_PIN, HIGH);
@@ -106,7 +106,7 @@ void StageManager::pick_block(uint8_t line_readings)
         delay(6000);
     }
     // Engage the claw
-    servo_manager.close_grabber();
+    servo_manager->close_grabber();
     
     // Transition to next stage when block has been picked up
 }

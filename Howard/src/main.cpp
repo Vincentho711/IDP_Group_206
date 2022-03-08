@@ -7,9 +7,9 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *leftMotor = AFMS.getMotor(LEFT_MOTOR_PIN);
 Adafruit_DCMotor *rightMotor = AFMS.getMotor(RIGHT_MOTOR_PIN);
 
-Servo &vertServo; 
-Servo &horiServo;
-ServoManager &servo_manager;
+Servo *vertServo; 
+Servo *horiServo;
+ServoManager *servo_manager;
 Line_sensor *line_sensor;
 Color_sensor *color_sensor;
 Motor motor(leftMotor, rightMotor);
@@ -37,8 +37,11 @@ void setup()
   Serial.println("Motor Shield found.");
 
   // Set up servos
-  vertServo.attach(VERT_SERVO_PIN);
-  horiServo.attach(HORI_SERVO_PIN);
+  vertServo->attach(VERT_SERVO_PIN);
+  horiServo->attach(HORI_SERVO_PIN);
+
+  // Attach configured servos onto servoManager object
+  servo_manager->attach_servos(vertServo,horiServo);
 
 
 }

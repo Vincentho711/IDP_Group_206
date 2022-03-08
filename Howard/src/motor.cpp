@@ -180,14 +180,20 @@ void Motor::turn_180()
     turn_right_90();
 }
 
-// Servo motor manager to
-ServoManager::ServoManager(Servo &vertServo, Servo &horiServo) : vertServo(vertServo), horiServo(horiServo)
+// Servo manager for controlling vertServo (lifting arm) and horiServo (closing grabber)
+ServoManager::ServoManager()
 {
-    // Set grabber to close to start with
-    horiServo.write(GRABBER_CLOSE_ANGLE);
-    initialised_servos = true;
+    initialised_servos = false;
     grabber_closed = false;
 };
+
+void ServoManager::attach_servos(Servo *vert_servo, Servo *hori_servo)
+{
+    vertServo = vert_servo;
+    horiServo = hori_servo;
+    // Set grabber to close to start off with
+    hori_servo->write(GRABBER_CLOSE_ANGLE);
+}
 
 void ServoManager::lift_arm()
 {
@@ -206,7 +212,7 @@ void ServoManager::open_grabber()
         // Sweep from close to open grabber
         for (int angle = GRABBER_CLOSE_ANGLE; angle <= GRABBER_OPEN_ANGLE; angle += 1)
         {
-            horiServo.write(angle);
+            horiServo->write(angle);
             delay(10);
         }
         grabber_closed = false;
@@ -221,7 +227,7 @@ void ServoManager::close_grabber()
         // And back from open to close grabber
         for (int angle = GRABBER_OPEN_ANGLE; angle >= GRABBER_CLOSE_ANGLE; angle -= 1)
         {
-            horiServo.write(angle);
+            horiServo->write(angle);
             delay(10);
         }
         grabber_closed = true;
