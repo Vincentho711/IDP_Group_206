@@ -201,6 +201,7 @@ ServoManager::ServoManager()
 {
     initialised_servos = false;
     grabber_closed = false;
+    lifter_up = true;
 };
 
 void ServoManager::attach_servos(Servo *vert_servo, Servo *hori_servo)
@@ -208,17 +209,42 @@ void ServoManager::attach_servos(Servo *vert_servo, Servo *hori_servo)
     vertServo = vert_servo;
     horiServo = hori_servo;
     // Set grabber to close to start off with
-    hori_servo->write(GRABBER_CLOSE_ANGLE);
+    horiServo->write(GRABBER_CLOSE_ANGLE);
+    // Set arm to be lifted to start off with
+    vertServo->write(LIFTER_UP_ANGLE);
 }
 
 void ServoManager::lift_arm()
 {
+    if (!lifter_up)
+    {
+        Serial.print("Lifting arm. /n");
+        // Sweep from down to up angle
+        for (int angle = LIFTER_DOWN_ANGLE; angle <= LIFTER_UP_ANGLE; angle += 1)
+        {
+            vertServo->write(angle);
+            delay(10);
+        }
+        lifter_up = true;
+    }
 }
 
 void ServoManager::lower_arm()
 {
+    if (lifter_up)
+    {
+        Serial.print("Lowering arm. /n");
+        // Sweep from up to down angle
+        for (int angle = LIFTER_UP_ANGLE; angle >= LIFTER_DOWN_ANGLE; angle -= 1)
+        {
+            {
+                vertServo->write(angle);
+                delay(10);
+            }
+            lifter_up = false;
+        }
+    }
 }
-
 void ServoManager::open_grabber()
 {
     // Check if grabber is closed first

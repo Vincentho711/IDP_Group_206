@@ -13,20 +13,20 @@ class Line_sensor{
 
 };
 
-class Color_sensor{
-    public:
-        Color_sensor();
-        bool is_red();
-        bool is_red_while_approaching(Distance_sensor *distance_sensor);
-    private:
-};
-
 class Distance_sensor{
     public:
         Distance_sensor();
         float get_distance();
     private:
         bool initialised_distance_sensor;
+};
+
+class Color_sensor{
+    public:
+        Color_sensor();
+        bool is_red();
+        bool is_red_while_approaching(Distance_sensor *distance_sensor);
+    private:
 };
 
 #endif

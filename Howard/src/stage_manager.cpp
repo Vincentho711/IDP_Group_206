@@ -1,6 +1,6 @@
 #include "stage_manager.hpp"
 
-StageManager::StageManager(Motor &motor, Color_sensor *color_sensor, ServoManager *servo_manager, Distance_sensor *Distance_sensor) : motor(motor), color_sensor(color_sensor),
+StageManager::StageManager(Motor &motor, Color_sensor *color_sensor, ServoManager *servo_manager, Distance_sensor *distance_sensor) : motor(motor), color_sensor(color_sensor),
                                                                                                                                       servo_manager(servo_manager), distance_sensor(distance_sensor)
 {
     // Initialise first state

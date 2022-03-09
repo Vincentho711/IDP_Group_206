@@ -17,6 +17,10 @@
 #define GRABBER_OPEN_ANGLE 120
 #define GRABBER_CLOSE_ANGLE 0
 
+// Arm lifter
+#define LIFTER_UP_ANGLE 105
+#define LIFTER_DOWN_ANGLE 50
+
 // LEDs
 #define MOVING_LED_PIN 6
 #define RED_LED_PIN 4

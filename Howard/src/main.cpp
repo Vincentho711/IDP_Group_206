@@ -14,7 +14,7 @@ Line_sensor *line_sensor;
 Distance_sensor *distance_sensor;
 Color_sensor *color_sensor;
 Motor motor(leftMotor, rightMotor);
-StageManager stage_manager(motor,color_sensor,servo_manager);
+StageManager stage_manager(motor,color_sensor,servo_manager,distance_sensor);
 
 uint8_t line_reading;
 

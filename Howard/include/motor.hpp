@@ -43,6 +43,7 @@ private:
     Servo *horiServo;
     bool initialised_servos;
     bool grabber_closed;
+    bool lifter_up;
 };
 
 #endif
