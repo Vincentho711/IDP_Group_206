@@ -165,7 +165,14 @@ void StageManager::ramp_2(uint8_t line_readings)
         {
             // Go forward slightly
             this->motor.go_forward(1000);
-            stage = &zone_to_home;
+            // Turn left or right
+            if (is_red_block) {
+                this->motor.turn_right_90();
+            }
+            else {
+                this->motor.turn_left_90();
+            }
+            stage = &drive_to_zone;
         }
     }
     // Detect junction, then go forward slightly
@@ -175,9 +182,16 @@ void StageManager::ramp_2(uint8_t line_readings)
 
 void StageManager::drive_to_zone(uint8_t line_readings)
 {
+    current_stage = "drive_to_zone";
+    Serial.print("Mode: ");
+    Serial.print(this->current_stage + "\n");
     // Then go forward (timed) to position block in drop off zone
+    this->motor.go_forward(1500);
     // Drop off block
+    servo_manager->lower_arm();
+    servo_manager->open_grabber();
     // Transition when block has been dropped off
+    stage = &zone_to_home;
 }
 
 void StageManager::zone_to_home(uint8_t line_readings)
@@ -186,8 +200,16 @@ void StageManager::zone_to_home(uint8_t line_readings)
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
     // Drive back (timed)
+    this->motor.go_backward(1600);
     // Rotation left/ right depending on block's colour
+    if (is_red_block) {
+        this->motor.turn_left_90();
+    }
+    else {
+        this->motor.turn_right_90();
+    }
     // Go forward (timed)
+    this->motor.go_forward(2500);
     Serial.print("Finish!!");
     // Stop and finish
 }
