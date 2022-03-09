@@ -22,6 +22,22 @@ void Motor::go_forward(int duration)
     }
 }
 
+void Motor::go_forward()
+{
+    if (motor_shield_found)
+    {
+        Serial.print("Going forward.\n");
+        left_motor->setSpeed(STRAIGHT_SPEED);
+        left_motor->run(FORWARD);
+        right_motor->setSpeed(STRAIGHT_SPEED);
+        right_motor->run(FORWARD);
+    }
+    else
+    {
+        Serial.print("Motor shield not found.\n");
+    }
+}
+
 void Motor::stop()
 {
     if (motor_shield_found)
