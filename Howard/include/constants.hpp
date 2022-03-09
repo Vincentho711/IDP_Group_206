@@ -5,18 +5,22 @@
 // Debug flags
 #define LINE_SENSOR_DEBUG 0
 
+// Distance sensor
+#define DISTANCE_SENSOR_TRIG_PIN 2
+#define DISTANCE_SENSOR_ECHO_PIN 3
+
 // Servos
-#define VERT_SERVO_PIN 5
-#define HORI_SERVO_PIN 6
+#define VERT_SERVO_PIN 1
+#define HORI_SERVO_PIN 7
 
 // Grabber
 #define GRABBER_OPEN_ANGLE 120
 #define GRABBER_CLOSE_ANGLE 0
 
 // LEDs
-#define MOVING_LED_PIN 2
-#define RED_LED_PIN 3
-#define GREEN_LED_PIN 4
+#define MOVING_LED_PIN 6
+#define RED_LED_PIN 4
+#define GREEN_LED_PIN 5
 
 //Pins
 /*

@@ -11,6 +11,7 @@ Servo *vertServo;
 Servo *horiServo;
 ServoManager *servo_manager;
 Line_sensor *line_sensor;
+Distance_sensor *distance_sensor;
 Color_sensor *color_sensor;
 Motor motor(leftMotor, rightMotor);
 StageManager stage_manager(motor,color_sensor,servo_manager);
@@ -43,6 +44,10 @@ void setup()
   // Attach configured servos onto servoManager object
   servo_manager->attach_servos(vertServo,horiServo);
 
+  // Distance sensor
+  pinMode(DISTANCE_SENSOR_TRIG_PIN, OUTPUT);
+  pinMode(DISTANCE_SENSOR_ECHO_PIN, INPUT);
+
 
 }
 
@@ -73,7 +78,8 @@ void loop()
 
   // Run with stage manager
   // stage_manager.loop(line_reading);
-  line_reading = line_sensor->get_line_readings();
-  stage_manager.loop(line_reading);
+  // line_reading = line_sensor->get_line_readings();
+  // stage_manager.loop(line_reading);
+  distance_sensor->get_distance();
   // color_sensor->is_red();
 }
