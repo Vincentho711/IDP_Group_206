@@ -116,3 +116,56 @@ bool Color_sensor::is_red()
     return false;
 
 }
+
+Color_sensor::is_red_while_approaching(Distance_sensor *distance_sensor) {
+    int reading;
+    int last_reading = 0;
+    float distance = distance_sensor->get_distance();
+    
+    int count = 0;
+    while(distance) 
+    {
+        distance = distance_sensor->get_distance();
+        reading = analogRead(COLOR_SENSOR_PIN);
+        Serial.println("...");
+        delay(1000);
+        if (reading>last_reading+15 && last_reading!=0) {
+            Serial.println("Red detected");
+            return true;
+        }
+        last_reading = reading;
+        count ++;
+    }
+    Serial.println("Red not detected");
+    return false;
+
+}
+
+Distance_sensor::Distance_sensor() {
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+}
+
+float Distance_sensor::get_distance() {
+
+    long duration;
+    float distance;
+
+    // Clears the trigPin condition
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    // Reads the echoPin, returns the sound wave travel time in microseconds
+    duration = pulseIn(ECHO_PIN, HIGH);
+    // Calculating the distance
+    distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+    // Displays the distance on the Serial Monitor
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+
+    return distance;
+}
