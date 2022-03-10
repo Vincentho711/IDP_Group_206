@@ -32,15 +32,15 @@ class ServoManager
 {
 public:
     ServoManager();
-    void attach_servos(Servo *vert_servo, Servo *hori_servo);
+    void attach_servos(Servo &vert_servo, Servo &hori_servo);
     void lift_arm();
     void lower_arm();
     void open_grabber();
     void close_grabber();
 
 private:
-    Servo *vertServo;
-    Servo *horiServo;
+    Servo vertServo;
+    Servo horiServo;
     bool initialised_servos;
     bool grabber_closed;
     bool lifter_up;

@@ -13,6 +13,7 @@ public:
     // Function pointer of class StageManager for state machine that takes in line readings
     void (StageManager::*stage)(uint8_t);
     // States
+    void start_to_home(uint8_t line_readings);
     void home_to_ramp_1(uint8_t line_readings);
     void ramp_1(uint8_t line_readings);
     void ramp_1_to_block(uint8_t line_readings);
@@ -23,6 +24,7 @@ public:
     void ramp_2(uint8_t line_readings);
     void drive_to_zone(uint8_t line_readings);
     void zone_to_home(uint8_t line_readings);
+    void finish(uint8_t line_readings);
     void loop(uint8_t line_readings);
   
 private:

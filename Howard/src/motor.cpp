@@ -192,7 +192,7 @@ void Motor::turn_right_90()
 void Motor::turn_180()
 {
     turn_right_90();
-    go_backward(1250);
+    go_backward(1450);
     turn_right_90();
 }
 
@@ -204,14 +204,14 @@ ServoManager::ServoManager()
     lifter_up = true;
 };
 
-void ServoManager::attach_servos(Servo *vert_servo, Servo *hori_servo)
+void ServoManager::attach_servos(Servo &vert_servo, Servo &hori_servo)
 {
     vertServo = vert_servo;
     horiServo = hori_servo;
     // Set grabber to close to start off with
-    horiServo->write(GRABBER_CLOSE_ANGLE);
+    horiServo.write(GRABBER_CLOSE_ANGLE);
     // Set arm to be lifted to start off with
-    vertServo->write(LIFTER_UP_ANGLE);
+    vertServo.write(LIFTER_UP_ANGLE);
 }
 
 void ServoManager::lift_arm()
@@ -222,7 +222,7 @@ void ServoManager::lift_arm()
         // Sweep from down to up angle
         for (int angle = LIFTER_DOWN_ANGLE; angle <= LIFTER_UP_ANGLE; angle += 1)
         {
-            vertServo->write(angle);
+            vertServo.write(angle);
             delay(10);
         }
         lifter_up = true;
@@ -238,7 +238,7 @@ void ServoManager::lower_arm()
         for (int angle = LIFTER_UP_ANGLE; angle >= LIFTER_DOWN_ANGLE; angle -= 1)
         {
             {
-                vertServo->write(angle);
+                vertServo.write(angle);
                 delay(10);
             }
             lifter_up = false;
@@ -254,7 +254,7 @@ void ServoManager::open_grabber()
         // Sweep from close to open grabber
         for (int angle = GRABBER_CLOSE_ANGLE; angle <= GRABBER_OPEN_ANGLE; angle += 1)
         {
-            horiServo->write(angle);
+            horiServo.write(angle);
             delay(10);
         }
         grabber_closed = false;
@@ -269,7 +269,7 @@ void ServoManager::close_grabber()
         // And back from open to close grabber
         for (int angle = GRABBER_OPEN_ANGLE; angle >= GRABBER_CLOSE_ANGLE; angle -= 1)
         {
-            horiServo->write(angle);
+            horiServo.write(angle);
             delay(10);
         }
         grabber_closed = true;
