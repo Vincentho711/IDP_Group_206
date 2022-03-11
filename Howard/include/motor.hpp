@@ -34,7 +34,7 @@ public:
     ServoManager();
     void attach_servos(Servo &vert_servo, Servo &hori_servo);
     void lift_arm();
-    void lower_arm();
+    void lower_arm(int down_angle = LIFTER_DOWN_ANGLE);
     void open_grabber();
     void close_grabber();
 

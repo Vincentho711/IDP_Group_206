@@ -14,7 +14,7 @@ Line_sensor *line_sensor;
 Distance_sensor *distance_sensor;
 Color_sensor *color_sensor;
 Motor motor(leftMotor, rightMotor);
-StageManager stage_manager(motor, color_sensor, servo_manager, distance_sensor);
+StageManager stage_manager(motor, line_sensor, color_sensor, servo_manager, distance_sensor);
 
 uint8_t line_reading;
 bool start = 0;
@@ -24,7 +24,7 @@ void set_state()
 {
   Serial.print("Start now. \n");
   start = !start;
-  delay(50);
+  delay(200);
 }
 
 void setup()
@@ -34,7 +34,7 @@ void setup()
 
   // Set up start button
   pinMode(START_BUTTON_PIN, INPUT);
-  attachInterrupt(digitalPinToInterrupt(START_BUTTON_PIN), set_state, RISING);
+  // attachInterrupt(digitalPinToInterrupt(START_BUTTON_PIN), set_state, RISING);
 
   // Set up the LED pin
   // Moving LED
@@ -70,8 +70,9 @@ void setup()
   digitalWrite(COLOR_SENSOR_WHITE_LED_PIN, HIGH); // sets the white LED on
   digitalWrite(MOVING_LED_PIN, HIGH); // Set the moving LED on
 
-  // Lift arm
-  // servo_manager->lift_arm();
+  // Lift arm and close grabber
+  servo_manager->lift_arm();
+  servo_manager->close_grabber();
 }
 
 void loop()
@@ -108,7 +109,20 @@ void loop()
   delay(1000);
   */
   // line_reading = line_sensor->get_line_readings();
-  // stage_manager.loop(line_reading);
+  stage_manager.loop();
+  /*
+  if (start){
+    // Serial.print("Entered loop if statement. \n");
+    stage_manager.loop();
+    start = 1;
+  }
+  else
+  {
+    Serial.print("Entered loop else statement. Stop forever. \n");
+    motor.stop();
+  }
+  
+  /*
   servo_manager->lower_arm();
   delay(3000);
   servo_manager->open_grabber();
@@ -117,8 +131,8 @@ void loop()
   delay(2000);
   servo_manager->lift_arm();
   delay(3000);
+  
   // Test LED
-  /*
   digitalWrite(RED_LED_PIN, HIGH);
   digitalWrite(GREEN_LED_PIN, HIGH);
   digitalWrite(MOVING_LED_PIN, HIGH);

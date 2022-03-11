@@ -229,13 +229,13 @@ void ServoManager::lift_arm()
     }
 }
 
-void ServoManager::lower_arm()
+void ServoManager::lower_arm(int down_angle = LIFTER_DOWN_ANGLE)
 {
     if (lifter_up)
     {
         Serial.print("Lowering arm. /n");
         // Sweep from up to down angle
-        for (int angle = LIFTER_UP_ANGLE; angle >= LIFTER_DOWN_ANGLE; angle -= 1)
+        for (int angle = LIFTER_UP_ANGLE; angle >= down_angle; angle -= 1)
         {
             {
                 vertServo.write(angle);
