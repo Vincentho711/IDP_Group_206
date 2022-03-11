@@ -46,5 +46,7 @@ private:
     ServoManager *servo_manager;
     // Store distance sensor instance
     Distance_sensor *distance_sensor;
+    // Stroe initial color sensor reading
+    int color_init;
 };
 #endif

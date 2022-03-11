@@ -94,6 +94,11 @@ Color_sensor::Color_sensor()
     pinMode(COLOR_SENSOR_PIN, INPUT);
 }
 
+int Color_sensor::get_reading()
+{
+    return analogRead(COLOR_SENSOR_PIN);
+}
+
 bool Color_sensor::is_red()
 {
     int reading;

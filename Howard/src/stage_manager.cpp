@@ -89,11 +89,12 @@ void StageManager::ramp_1_to_block()
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
     // Line follow for 1750ms
+    color_init = color_sensor->get_reading();
     if (millis() - current_stage_start_time <= 1750)
     {
         this->motor.Line_following(line_readings, false);
-        Serial.print("Before colour: ");
-        Serial.println(analogRead(COLOR_SENSOR_PIN));
+        // Serial.print("Before colour: ");
+        // Serial.println(analogRead(COLOR_SENSOR_PIN));
     }
     else
     {
@@ -134,12 +135,32 @@ void StageManager::stop_and_open_grabber()
     {
         // Stop first
         motor.stop();
-        Serial.print("After colour: ");
-        Serial.println(analogRead(COLOR_SENSOR_PIN));
+        int color_after = color_sensor->get_reading();
+        // Serial.print("After colour: ");
+        // Serial.println(analogRead(COLOR_SENSOR_PIN));
+        if (color_after>color_init+50) {
+            is_red_block = true;
+            // Flash red
+            digitalWrite(RED_LED_PIN, HIGH);
+            digitalWrite(GREEN_LED_PIN, LOW);
+            delay(6000);
+            digitalWrite(RED_LED_PIN, LOW);
+            digitalWrite(GREEN_LED_PIN, LOW);
+        }
+        else {
+            is_red_block = false;
+            // Flash green
+            digitalWrite(RED_LED_PIN, LOW);
+            digitalWrite(GREEN_LED_PIN, HIGH);
+            delay(6000);
+            digitalWrite(RED_LED_PIN, LOW);
+            digitalWrite(GREEN_LED_PIN, LOW);
+        }
+
+
     }
     else
     {
-        servo_manager->lower_arm();
         // Update the starting time for the next stage
         current_stage_start_time = millis();
         // Transition to next stage when grabber has been opened
@@ -155,12 +176,6 @@ void StageManager::pick_block()
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
 
-    // Flash red
-    digitalWrite(RED_LED_PIN, HIGH);
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(6000);
-    digitalWrite(RED_LED_PIN, LOW);
-    digitalWrite(GREEN_LED_PIN, LOW);
     servo_manager->lift_arm();
     delay(1000);
     servo_manager->lower_arm();

@@ -24,6 +24,7 @@ class Distance_sensor{
 class Color_sensor{
     public:
         Color_sensor();
+        int get_reading();
         bool is_red();
         bool is_red_while_approaching(Distance_sensor *distance_sensor);
     private:
