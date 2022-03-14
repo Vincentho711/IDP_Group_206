@@ -192,7 +192,7 @@ void Motor::turn_right_90()
 void Motor::turn_180()
 {
     turn_right_90();
-    go_backward(1450);
+    go_backward(1550);
     turn_right_90();
 }
 

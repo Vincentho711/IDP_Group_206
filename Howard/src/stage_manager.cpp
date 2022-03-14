@@ -76,6 +76,10 @@ void StageManager::ramp_1()
             // Lower arm and open grabber
             servo_manager->open_grabber();
             servo_manager->lower_arm(40);
+            // Line follow for 1750ms
+            color_init = color_sensor->get_reading();
+            Serial.print("Before colour: ");
+            Serial.println(color_init);
             // Update the starting time for the next stage
             current_stage_start_time = millis();
             stage = &ramp_1_to_block;
@@ -88,13 +92,9 @@ void StageManager::ramp_1_to_block()
     current_stage = "ramp_1_to_block";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
-    // Line follow for 1750ms
-    color_init = color_sensor->get_reading();
     if (millis() - current_stage_start_time <= 1750)
     {
         this->motor.Line_following(line_readings, false);
-        // Serial.print("Before colour: ");
-        // Serial.println(analogRead(COLOR_SENSOR_PIN));
     }
     else
     {
@@ -131,14 +131,13 @@ void StageManager::stop_and_open_grabber()
     current_stage = "stop_and_open_grabber";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
-    if (millis() - current_stage_start_time <= 3000)
+    if (millis() - current_stage_start_time <= 3200)
     {
-        // Stop first
-        motor.stop();
         int color_after = color_sensor->get_reading();
-        // Serial.print("After colour: ");
-        // Serial.println(analogRead(COLOR_SENSOR_PIN));
-        if (color_after>color_init+50) {
+        Serial.print("After color: ");
+        Serial.println(color_after);
+        if (color_after > color_init + 25)
+        {
             is_red_block = true;
             // Flash red
             digitalWrite(RED_LED_PIN, HIGH);
@@ -147,7 +146,8 @@ void StageManager::stop_and_open_grabber()
             digitalWrite(RED_LED_PIN, LOW);
             digitalWrite(GREEN_LED_PIN, LOW);
         }
-        else {
+        else
+        {
             is_red_block = false;
             // Flash green
             digitalWrite(RED_LED_PIN, LOW);
@@ -156,8 +156,6 @@ void StageManager::stop_and_open_grabber()
             digitalWrite(RED_LED_PIN, LOW);
             digitalWrite(GREEN_LED_PIN, LOW);
         }
-
-
     }
     else
     {
@@ -180,7 +178,7 @@ void StageManager::pick_block()
     delay(1000);
     servo_manager->lower_arm();
     // delay(1000);
-    //servo_manager->open_grabber();
+    // servo_manager->open_grabber();
     delay(1000);
     servo_manager->close_grabber();
     delay(1000);
@@ -226,7 +224,7 @@ void StageManager::turning_at_block()
     this->motor.turn_180();
     // Update the starting time for the next stage
     current_stage_start_time = millis();
-    stage = &block_to_ramp_2;
+    stage = &ramp_2;
     // Transition when turned
 }
 
@@ -262,23 +260,24 @@ void StageManager::ramp_2()
         if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 || line_readings == 0b00000101)
         {
             // Go forward slightly
-            this->motor.go_forward(3500);
+            this->motor.go_forward(1200);
 
-            /*
             // Turn left or right
             if (is_red_block)
             {
                 this->motor.turn_right_90();
+                motor.go_forward(1000);
             }
             else
             {
                 this->motor.turn_left_90();
+                motor.go_forward(1000);
             }
-            stage = &drive_to_zone;
-            */
             // Update the starting time for the next stage
             current_stage_start_time = millis();
-            stage = &finish;
+            stage = &drive_to_zone;
+
+            // stage = &finish;
         }
     }
     // Detect junction, then go forward slightly
@@ -291,11 +290,30 @@ void StageManager::drive_to_zone()
     current_stage = "drive_to_zone";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
+    // Line following for x seconds
+    if (millis() - current_stage_start_time <= 1500)
+    {
+        this->motor.Line_following(line_readings, false);
+    }
+    if (millis() - current_stage_start_time >= 1501)
+    {
+        // Stop and drop box
+        motor.stop();
+        delay(1000);
+        servo_manager->lower_arm();
+        delay(1000);
+        servo_manager->open_grabber();
+        delay(1000);
+        servo_manager->lift_arm();
+        delay(1000);
+    }
+    /*
     // Then go forward (timed) to position block in drop off zone
     this->motor.go_forward(1500);
     // Drop off block
     servo_manager->lower_arm();
     servo_manager->open_grabber();
+    */
     // Update the starting time for the next stage
     current_stage_start_time = millis();
     // Transition when block has been dropped off
