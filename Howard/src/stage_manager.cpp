@@ -5,6 +5,7 @@ StageManager::StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor 
 {
     // Initialise first state
     stage = &start_to_home;
+    //stage = &ramp_2;
     current_stage = "start_to_home";
     // stage = &ramp_2;
     // current_stage = "ramp_2";
@@ -98,6 +99,7 @@ void StageManager::ramp_1_to_block()
     }
     else
     {
+        motor.stop();
         // Transition to next stage when 3000ms has passed
         // Update the starting time for the next stage
         current_stage_start_time = millis();
@@ -222,6 +224,8 @@ void StageManager::turning_at_block()
     Serial.print(this->current_stage + "\n");
     // Turn 180 degrees
     this->motor.turn_180();
+    // Go forward slightly
+    this->motor.go_forward(200);
     // Update the starting time for the next stage
     current_stage_start_time = millis();
     stage = &ramp_2;
@@ -260,18 +264,16 @@ void StageManager::ramp_2()
         if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 || line_readings == 0b00000101)
         {
             // Go forward slightly
-            this->motor.go_forward(1200);
+            this->motor.go_forward(1400);
 
             // Turn left or right
             if (is_red_block)
             {
                 this->motor.turn_right_90();
-                motor.go_forward(1000);
             }
             else
             {
                 this->motor.turn_left_90();
-                motor.go_forward(1000);
             }
             // Update the starting time for the next stage
             current_stage_start_time = millis();
@@ -291,11 +293,11 @@ void StageManager::drive_to_zone()
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
     // Line following for x seconds
-    if (millis() - current_stage_start_time <= 1500)
+    if (millis() - current_stage_start_time <= 150)
     {
         this->motor.Line_following(line_readings, false);
     }
-    if (millis() - current_stage_start_time >= 1501)
+    if (millis() - current_stage_start_time >= 151)
     {
         // Stop and drop box
         motor.stop();
@@ -306,6 +308,11 @@ void StageManager::drive_to_zone()
         delay(1000);
         servo_manager->lift_arm();
         delay(1000);
+
+        // Update the starting time for the next stage
+        current_stage_start_time = millis();
+        // Transition when block has been dropped off
+        stage = &zone_to_home;
     }
     /*
     // Then go forward (timed) to position block in drop off zone
@@ -314,10 +321,7 @@ void StageManager::drive_to_zone()
     servo_manager->lower_arm();
     servo_manager->open_grabber();
     */
-    // Update the starting time for the next stage
-    current_stage_start_time = millis();
-    // Transition when block has been dropped off
-    stage = &zone_to_home;
+    
 }
 
 void StageManager::zone_to_home()
