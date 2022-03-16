@@ -19,6 +19,7 @@ public:
     void go_backward(int duration);
     void turn_left_90(int rotation_time = ROTATION_TIME_90);
     void turn_right_90(int rotation_time = ROTATION_TIME_90);
+    void turn_right();
     void turn_180();
     void pivot_right_turn_90(int rotation_time = ROTATION_TIME_90);
     void pivot_left_turn_90(int rotation_time = ROTATION_TIME_90);

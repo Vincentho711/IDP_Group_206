@@ -269,10 +269,18 @@ void Motor::turn_right_90(int rotation_time = ROTATION_TIME_90)
     left_motor->setSpeed(0);
 }
 
+void Motor::turn_right()
+{
+    left_motor->run(FORWARD);
+    right_motor->run(RELEASE);
+    left_motor->setSpeed(ROTATION_SPEED_HIGH);
+    right_motor->setSpeed(ROTATION_SPEED_LOW);
+}
+
 void Motor::turn_180()
 {
     turn_right_90();
-    go_backward(1550);
+    go_backward(1500);
     turn_right_90();
 }
 

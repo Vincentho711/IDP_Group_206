@@ -70,11 +70,11 @@ void StageManager::test_servo()
 {
     open_grabber();
     delay(1000);
+    lower_arm();
+    delay(1000);
     close_grabber();
     delay(1000);
     lift_arm();
-    delay(1000);
-    lower_arm();
     delay(1000);
 }
 void StageManager::start_to_home()
@@ -306,7 +306,16 @@ void StageManager::turning_at_block()
     current_stage = "turning_at_block";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
-    // Turn 180 degrees
+    //Turn 180 degrees
+    // this->motor.turn_right_90();
+    // this->motor.go_backward(1550);
+    // this->motor.turn_right();
+    // if (line_readings != 0b00000000){
+    //     this->motor.stop();
+    //     this->motor.go_forward(500);
+    //     current_stage_start_time = millis();
+    //     stage = &ramp_2;
+    // }
     this->motor.turn_180();
     // Go forward slightly
     this->motor.go_forward(200);
@@ -328,7 +337,7 @@ void StageManager::block_to_ramp_2()
         if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 || line_readings == 0b00000101)
         {
             // Move forward slightly to prevent double detection of junction before transition
-            motor.go_forward(250);
+            motor.go_forward(350);
             // Update the starting time for the next stage
             current_stage_start_time = millis();
             stage = &ramp_2;
@@ -352,7 +361,7 @@ void StageManager::ramp_2()
             // Turn left or right
             if (is_red_block)
             {
-                this->motor.go_forward(1500);
+                this->motor.go_forward(1600);
                 motor.stop();
                 delay(1000);
                 this->motor.pivot_right_turn_90(1000);
@@ -362,10 +371,10 @@ void StageManager::ramp_2()
             }
             else
             {
-                this->motor.go_forward(1500);
+                this->motor.go_forward(1700);
                 motor.stop();
                 delay(1000);
-                this->motor.pivot_left_turn_90(1300);
+                this->motor.pivot_left_turn_90(1200);
                 block_colour = 'b';
                 motor.stop();
                 delay(1000);
@@ -391,10 +400,10 @@ void StageManager::drive_to_zone()
     // Line following for x seconds
     int forward_duration;
     if (is_red_block){
-        forward_duration = 2000;
+        forward_duration = 3100;
     }
     else {
-        forward_duration = 2300;
+        forward_duration = 3000;
     }
     if (millis() - current_stage_start_time <= forward_duration)
     {

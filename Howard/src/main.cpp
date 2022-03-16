@@ -73,8 +73,8 @@ void setup()
   digitalWrite(MOVING_LED_PIN, HIGH); // Set the moving LED on
 
   // Lift arm and close grabber
-  servo_manager->lift_arm();
-  servo_manager->close_grabber();
+  stage_manager.lift_arm();
+  stage_manager.close_grabber();
 }
 
 void loop()
