@@ -10,8 +10,42 @@ Line_sensor::Line_sensor()
         Serial.print("Line sensors initiated.\n");
     }
 }
-uint8_t Line_sensor::get_line_readings()
+uint8_t Line_sensor::get_line_readings(char colour = 'w')
 {
+    int left_threshold;
+    int left_margin;
+    int middle_threshold;
+    int middle_margin;
+    int right_threshold;
+    int right_margin;
+    switch (colour)
+    {
+    case 'w':
+        left_threshold = LINE_SENSOR_LEFT_THRESHOLD;
+        left_margin = LINE_SENSOR_LEFT_MARGIN;
+        middle_threshold = LINE_SENSOR_MIDDLE_THRESHOLD;
+        middle_margin = LINE_SENSOR_MIDDLE_MARGIN;
+        right_threshold = LINE_SENSOR_RIGHT_THRESHOLD;
+        right_margin = LINE_SENSOR_RIGHT_MARGIN;
+        break;
+    case 'r':
+        left_threshold = LINE_SENSOR_RED_LEFT_THRESHOLD;
+        left_margin = LINE_SENSOR_RED_LEFT_MARGIN;
+        middle_threshold = LINE_SENSOR_RED_MIDDLE_THRESHOLD;
+        middle_margin = LINE_SENSOR_RED_MIDDLE_MARGIN;
+        right_threshold = LINE_SENSOR_RED_RIGHT_THRESHOLD;
+        right_margin = LINE_SENSOR_RED_RIGHT_MARGIN;
+
+    default:
+        left_threshold = LINE_SENSOR_BLUE_LEFT_THRESHOLD;
+        left_margin = LINE_SENSOR_BLUE_LEFT_MARGIN;
+        middle_threshold = LINE_SENSOR_BLUE_MIDDLE_THRESHOLD;
+        middle_margin = LINE_SENSOR_BLUE_MIDDLE_MARGIN;
+        right_threshold = LINE_SENSOR_BLUE_RIGHT_THRESHOLD;
+        right_margin = LINE_SENSOR_BLUE_RIGHT_MARGIN;
+        break;
+    }
+    
     int anaLeft = analogRead(LINE_SENSOR_LEFT_PIN);
     int anaMiddle = analogRead(LINE_SENSOR_MIDDLE_PIN);
     int anaRight = analogRead(LINE_SENSOR_RIGHT_PIN);
@@ -21,29 +55,29 @@ uint8_t Line_sensor::get_line_readings()
     bool digRight = 0;
 
     // Schmitt Trigger
-    if (anaLeft >= (LINE_SENSOR_LEFT_THRESHOLD + LINE_SENSOR_LEFT_MARGIN))
+    if (anaLeft >= (left_threshold + left_margin))
     {
         digLeft = 1;
     }
-    if (anaLeft <= (LINE_SENSOR_LEFT_THRESHOLD - LINE_SENSOR_LEFT_MARGIN))
+    if (anaLeft <= (left_threshold - left_margin))
     {
         digLeft = 0;
     }
 
-    if (anaMiddle >= (LINE_SENSOR_MIDDLE_THRESHOLD + LINE_SENSOR_MIDDLE_MARGIN))
+    if (anaMiddle >= (middle_threshold + middle_margin))
     {
         digMiddle = 1;
     }
-    if (anaMiddle <= (LINE_SENSOR_MIDDLE_THRESHOLD - LINE_SENSOR_MIDDLE_MARGIN))
+    if (anaMiddle <= (middle_threshold - middle_margin))
     {
         digMiddle = 0;
     }
 
-    if (anaRight >= (LINE_SENSOR_RIGHT_THRESHOLD + LINE_SENSOR_RIGHT_MARGIN))
+    if (anaRight >= (right_threshold + right_margin))
     {
         digRight = 1;
     }
-    if (anaRight <= (LINE_SENSOR_RIGHT_THRESHOLD - LINE_SENSOR_RIGHT_MARGIN))
+    if (anaRight <= (right_threshold - right_margin))
     {
         digRight = 0;
     }

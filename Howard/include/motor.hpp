@@ -10,15 +10,18 @@ class Motor
 {
 public:
     Motor(Adafruit_DCMotor *leftMotor, Adafruit_DCMotor *rightMotor);
-    bool Line_following(uint8_t line_readings, bool ignore_all_zeroes = false);
+    bool Line_following(uint8_t line_readings, bool ignore_all_zeroes);
+    bool Line_following(uint8_t line_readings, bool ignore_all_zeroes, int speed, float sensitivity = 0.2);
     void go_forward(int duration);
     void go_forward();
     void stop();
     void go_forward_then_stop();
     void go_backward(int duration);
-    void turn_left_90();
-    void turn_right_90();
+    void turn_left_90(int rotation_time = ROTATION_TIME_90);
+    void turn_right_90(int rotation_time = ROTATION_TIME_90);
     void turn_180();
+    void pivot_right_turn_90(int rotation_time = ROTATION_TIME_90);
+    void pivot_left_turn_90(int rotation_time = ROTATION_TIME_90);
 
 private:
     Adafruit_MotorShield *motorShield;

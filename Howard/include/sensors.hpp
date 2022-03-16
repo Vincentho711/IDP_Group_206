@@ -7,7 +7,7 @@ class Line_sensor{
     public:
         // Constructor
         Line_sensor();
-        uint8_t get_line_readings();
+        uint8_t get_line_readings(char colour = 'w');
         
     private:
 

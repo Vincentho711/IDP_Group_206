@@ -89,7 +89,7 @@ void Motor::go_backward(int duration)
     }
 }
 
-bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false)
+bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes)
 {
     if (line_readings == 0b00000010)
     {
@@ -167,24 +167,104 @@ bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes = false
     return true;
 }
 
-void Motor::turn_left_90()
+bool Motor::Line_following(uint8_t line_readings, bool ignore_all_zeroes, int speed, float sensitivity = 0.2)
+{
+    int correction_high = speed * (1+sensitivity);
+    int correction_low = speed * (1-sensitivity);
+    if (line_readings == 0b00000010)
+    {
+        Serial.print("Drive_forward\n");
+        left_motor->run(FORWARD);
+        left_motor->setSpeed(speed);
+        right_motor->run(FORWARD);
+        right_motor->setSpeed(speed);
+        no_readings_count = 0;
+    }
+    else if (line_readings == 0b00000100)
+    {
+        Serial.print("Drive_right\n");
+        left_motor->run(FORWARD);
+        left_motor->setSpeed(correction_low);
+        right_motor->run(FORWARD);
+        right_motor->setSpeed(correction_high);
+        no_readings_count = 0;
+    }
+    else if (line_readings == 0b00000001)
+    {
+        Serial.print("Drive_left\n");
+        left_motor->run(FORWARD);
+        left_motor->setSpeed(correction_high);
+        right_motor->run(FORWARD);
+        right_motor->setSpeed(correction_low);
+        no_readings_count = 0;
+    }
+    else if (line_readings == 0b00000000)
+    {
+        if (ignore_all_zeroes)
+        {
+            Serial.print("Ignoring all Zeros.Drive_forward \n");
+            left_motor->run(FORWARD);
+            left_motor->setSpeed(speed);
+            right_motor->run(FORWARD);
+            right_motor->setSpeed(speed);
+            no_readings_count = 0;
+        }
+        else
+        {
+            Serial.print("All Zeros. \n");
+            if (no_readings_count > 1000)
+            {
+                Serial.print("Stop NOW.\n");
+                left_motor->run(FORWARD);
+                left_motor->setSpeed(0);
+                right_motor->run(FORWARD);
+                right_motor->setSpeed(0);
+                no_readings_count = 0;
+                return false;
+            }
+            else
+            {
+                Serial.print("In else statement. \n");
+                left_motor->run(FORWARD);
+                left_motor->setSpeed(speed);
+                right_motor->run(FORWARD);
+                right_motor->setSpeed(speed);
+                no_readings_count++;
+            }
+        }
+    }
+    // Junction detection
+    else
+    {
+        Serial.print("Junction detected\n");
+        left_motor->run(RELEASE);
+        left_motor->setSpeed(0);
+        right_motor->run(RELEASE);
+        right_motor->setSpeed(0);
+        no_readings_count = 0;
+        return false;
+    }
+    return true;
+}
+
+void Motor::turn_left_90(int rotation_time = ROTATION_TIME_90)
 {
     left_motor->run(RELEASE);
     right_motor->run(FORWARD);
     left_motor->setSpeed(ROTATION_SPEED_LOW);
     right_motor->setSpeed(ROTATION_SPEED_HIGH);
-    delay(ROTATION_TIME_90);
+    delay(rotation_time);
     right_motor->run(RELEASE);
     right_motor->setSpeed(0);
 }
 
-void Motor::turn_right_90()
+void Motor::turn_right_90(int rotation_time = ROTATION_TIME_90)
 {
     left_motor->run(FORWARD);
     right_motor->run(RELEASE);
     left_motor->setSpeed(ROTATION_SPEED_HIGH);
     right_motor->setSpeed(ROTATION_SPEED_LOW);
-    delay(ROTATION_TIME_90);
+    delay(rotation_time);
     left_motor->run(RELEASE);
     left_motor->setSpeed(0);
 }
@@ -196,11 +276,38 @@ void Motor::turn_180()
     turn_right_90();
 }
 
+void Motor::pivot_right_turn_90(int rotation_time = ROTATION_TIME_90)
+{
+    left_motor->run(FORWARD);
+    right_motor->run(BACKWARD);
+    left_motor->setSpeed(ROTATION_SPEED_HIGH);
+    right_motor->setSpeed(ROTATION_SPEED_HIGH);
+    delay(rotation_time);
+    left_motor->run(RELEASE);
+    left_motor->setSpeed(0);
+    right_motor->run(RELEASE);
+    right_motor->setSpeed(0);
+
+}
+
+void Motor::pivot_left_turn_90(int rotation_time = ROTATION_TIME_90)
+{
+    left_motor->run(BACKWARD);
+    right_motor->run(FORWARD);
+    left_motor->setSpeed(ROTATION_SPEED_HIGH);
+    right_motor->setSpeed(ROTATION_SPEED_HIGH);
+    delay(rotation_time);
+    left_motor->run(RELEASE);
+    left_motor->setSpeed(0);
+    right_motor->run(RELEASE);
+    right_motor->setSpeed(0);
+}
+
 // Servo manager for controlling vertServo (lifting arm) and horiServo (closing grabber)
 ServoManager::ServoManager()
 {
     initialised_servos = false;
-    grabber_closed = false;
+    grabber_closed = true;
     lifter_up = true;
 };
 
@@ -241,8 +348,8 @@ void ServoManager::lower_arm(int down_angle = LIFTER_DOWN_ANGLE)
                 vertServo.write(angle);
                 delay(10);
             }
-            lifter_up = false;
         }
+        lifter_up = false;
     }
 }
 void ServoManager::open_grabber()

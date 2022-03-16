@@ -46,7 +46,11 @@ private:
     ServoManager *servo_manager;
     // Store distance sensor instance
     Distance_sensor *distance_sensor;
-    // Stroe initial color sensor reading
+    // Store initial color sensor reading
     int color_init;
+    // For distance sensing while line following
+    bool keep_line_following;
+    // Store the char of the colour of the block
+    char block_colour;
 };
 #endif

@@ -72,7 +72,7 @@ void setup()
 
   // Lift arm and close grabber
   servo_manager->lift_arm();
-  servo_manager->close_grabber();
+  servo_manager->open_grabber();
 }
 
 void loop()
@@ -108,7 +108,11 @@ void loop()
   digitalWrite(COLOR_SENSOR_WHITE_LED_PIN, LOW); // sets the white LED on
   delay(1000);
   */
-  // line_reading = line_sensor->get_line_readings();
+  // line_reading = line_sensor->get_line_readings('r');
+  // servo_manager->open_grabber();
+  // delay(1000);
+  // servo_manager->close_grabber();
+  // delay(1000);
   stage_manager.loop();
   /*
   if (start){
