@@ -9,9 +9,15 @@ class StageManager
 {
 public:
     // Constructor
-    StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor *color_sensor, ServoManager *ServoManager, Distance_sensor *distance_sensor);
+    StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor *color_sensor, Distance_sensor *distance_sensor);
+    void attach_servos(Servo &vertServo, Servo &horiServo);
+    void test_servo();
     // Function pointer of class StageManager for state machine that takes in line readings
     void (StageManager::*stage)();
+    void open_grabber();
+    void close_grabber();
+    void lift_arm();
+    void lower_arm(int down_angle = LIFTER_DOWN_ANGLE);
     // States
     void start_to_home();
     void home_to_ramp_1();
@@ -43,7 +49,9 @@ private:
     // Store color sensor instance
     Color_sensor *color_sensor;
     // Store servoManager instance
-    ServoManager *servo_manager;
+    //ServoManager *servo_manager;
+    Servo vert_servo;
+    Servo hori_servo;
     // Store distance sensor instance
     Distance_sensor *distance_sensor;
     // Store initial color sensor reading

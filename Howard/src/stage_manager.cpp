@@ -1,7 +1,7 @@
 #include "stage_manager.hpp"
 
-StageManager::StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor *color_sensor, ServoManager *servo_manager, Distance_sensor *distance_sensor) : motor(motor), line_sensor(line_sensor), color_sensor(color_sensor),
-                                                                                                                                                                servo_manager(servo_manager), distance_sensor(distance_sensor)
+StageManager::StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor *color_sensor, Distance_sensor *distance_sensor) : motor(motor), line_sensor(line_sensor), color_sensor(color_sensor),
+                                                                                                                                                                distance_sensor(distance_sensor)
 {
     // Initialise first state
     stage = &start_to_home;
@@ -14,6 +14,69 @@ StageManager::StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor 
     // current_stage = "ramp_2";
 };
 
+void StageManager::attach_servos(Servo &vertServo, Servo &horiServo)
+{
+    vert_servo = vertServo;
+    hori_servo = horiServo;
+}
+
+void StageManager::open_grabber()
+{
+    Serial.print("Opening grabber. \n");
+    // Sweep from close to open grabber
+    for (int angle = GRABBER_CLOSE_ANGLE; angle <= GRABBER_OPEN_ANGLE; angle += 1)
+    {
+        hori_servo.write(angle);
+        delay(10);
+    }
+}
+
+void StageManager::close_grabber()
+{
+    Serial.print("Closing grabber. \n");
+    // And back from open to close grabber
+    for (int angle = GRABBER_OPEN_ANGLE; angle >= GRABBER_CLOSE_ANGLE; angle -= 1)
+    {
+        hori_servo.write(angle);
+        delay(10);
+    }
+}
+
+void StageManager::lift_arm()
+{
+    Serial.print("Lifting arm. /n");
+    // Sweep from down to up angle
+    for (int angle = LIFTER_DOWN_ANGLE; angle <= LIFTER_UP_ANGLE; angle += 1)
+    {
+        vert_servo.write(angle);
+        delay(10);
+    }
+}
+
+void StageManager::lower_arm(int down_angle = LIFTER_DOWN_ANGLE)
+{
+    Serial.print("Lowering arm. /n");
+    // Sweep from up to down angle
+    for (int angle = LIFTER_UP_ANGLE; angle >= down_angle; angle -= 1)
+    {
+        {
+            vert_servo.write(angle);
+            delay(10);
+        }
+    }
+}
+
+void StageManager::test_servo()
+{
+    open_grabber();
+    delay(1000);
+    close_grabber();
+    delay(1000);
+    lift_arm();
+    delay(1000);
+    lower_arm();
+    delay(1000);
+}
 void StageManager::start_to_home()
 {
     Serial.print("Mode: ");
@@ -79,9 +142,9 @@ void StageManager::ramp_1()
             motor.stop();
             delay(2000);
             // Lower arm and open grabber
-            servo_manager->open_grabber();
+            open_grabber();
             delay(1000);
-            servo_manager->lower_arm(30);
+            lower_arm(30);
             // Line follow for 1750ms
             color_init = color_sensor->get_reading();
             Serial.print("Before colour: ");
@@ -194,18 +257,18 @@ void StageManager::pick_block()
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
 
-    servo_manager->lift_arm();
+    lift_arm();
     delay(1000);
-    servo_manager->lower_arm();
+    lower_arm();
     // delay(1000);
     // servo_manager->open_grabber();
     delay(500);
     motor.go_forward(200);
     motor.stop();
     delay(500);
-    servo_manager->close_grabber();
+    close_grabber();
     delay(1000);
-    servo_manager->lift_arm();
+    lift_arm();
     /*
     // Implement picking logic
     motor.go_forward();
@@ -342,11 +405,11 @@ void StageManager::drive_to_zone()
         // Stop and drop box
         motor.stop();
         delay(1000);
-        servo_manager->lower_arm();
+        lower_arm();
         delay(1000);
-        servo_manager->open_grabber();
+        open_grabber();
         delay(1000);
-        servo_manager->lift_arm();
+        lift_arm();
         delay(1000);
 
         // Update the starting time for the next stage

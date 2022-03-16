@@ -14,7 +14,7 @@ Line_sensor *line_sensor;
 Distance_sensor *distance_sensor;
 Color_sensor *color_sensor;
 Motor motor(leftMotor, rightMotor);
-StageManager stage_manager(motor, line_sensor, color_sensor, servo_manager, distance_sensor);
+StageManager stage_manager(motor, line_sensor, color_sensor, distance_sensor);
 
 uint8_t line_reading;
 bool start = 0;
@@ -58,7 +58,9 @@ void setup()
   horiServo.attach(HORI_SERVO_PIN);
 
   // Attach configured servos onto servoManager object
-  servo_manager->attach_servos(vertServo, horiServo);
+  stage_manager.attach_servos(vertServo, horiServo);
+
+  //stage_manager.attach_servo_manager(servo_manager);
 
   // Distance sensor
   pinMode(DISTANCE_SENSOR_TRIG_PIN, OUTPUT);
@@ -72,7 +74,7 @@ void setup()
 
   // Lift arm and close grabber
   servo_manager->lift_arm();
-  servo_manager->open_grabber();
+  servo_manager->close_grabber();
 }
 
 void loop()
@@ -112,6 +114,14 @@ void loop()
   // servo_manager->open_grabber();
   // delay(1000);
   // servo_manager->close_grabber();
+  // delay(1000);
+  // servo_manager->open_grabber();
+  // delay(1000);
+  // servo_manager->close_grabber();
+  // delay(1000);
+  // servo_manager->lift_arm();
+  // delay(1000);
+  // servo_manager->lower_arm();
   // delay(1000);
   stage_manager.loop();
   /*
