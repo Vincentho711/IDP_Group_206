@@ -4,7 +4,7 @@ A central repository for the Cambridge Engineering Tripos 1B Integrated Design P
 ## Our robot 🤖
 The name of our robot is called Howard! It has been built from scratch from mechanical design to embedded software implementation. The code which drives Howard is located in the `Howard` folder.
 
-<img src="https://github.com/Vincentho711/IDP_Group_206/blob/main/images/howard.jpg" width="1008" height="756">
+<img src="https://github.com/Vincentho711/IDP_Group_206/blob/main/images/howard.jpg" width="756" height="756">
 
 ## Demo 🎭
 ![Demo](https://github.com/Vincentho711/IDP_Group_206/blob/main/images/howard_gif.gif)
