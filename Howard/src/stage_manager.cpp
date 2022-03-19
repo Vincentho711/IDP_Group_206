@@ -1,17 +1,14 @@
 #include "stage_manager.hpp"
 
 StageManager::StageManager(Motor &motor, Line_sensor *line_sensor, Color_sensor *color_sensor, Distance_sensor *distance_sensor) : motor(motor), line_sensor(line_sensor), color_sensor(color_sensor),
-                                                                                                                                                                distance_sensor(distance_sensor)
+                                                                                                                                   distance_sensor(distance_sensor)
 {
     // Initialise first state
     stage = &start_to_home;
     is_red_block = false;
     block_colour = 'w';
-    // stage = &ramp_2;
     current_stage = "start_to_home";
     keep_line_following = true;
-    // stage = &ramp_2;
-    // current_stage = "ramp_2";
 };
 
 void StageManager::attach_servos(Servo &vertServo, Servo &horiServo)
@@ -90,12 +87,6 @@ void StageManager::start_to_home()
 }
 void StageManager::home_to_ramp_1()
 {
-    // Execute Line following until it returns False
-    /*
-    this->motor.go_forward();
-    delay(5000);
-    stage = &ramp_1;
-    */
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
     if (!this->motor.Line_following(line_readings, false))
@@ -112,21 +103,10 @@ void StageManager::home_to_ramp_1()
             stage = &ramp_1;
         }
     }
-
-    /*
-    if (!(this->motor.Line_following(line_readings)))
-    {
-
-        // Transition to ramp_1 stage
-        stage = &ramp_1;
-        current_stage = "ramp_1";
-    }
-    */
 }
 
 void StageManager::ramp_1()
 {
-    // Do someting
     current_stage = "ramp_1";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
@@ -145,7 +125,7 @@ void StageManager::ramp_1()
             open_grabber();
             delay(1000);
             lower_arm(30);
-            // Line follow for 1750ms
+            // Take a colour sensor reading before reaching the block for comparison later
             color_init = color_sensor->get_reading();
             Serial.print("Before colour: ");
             Serial.println(color_init);
@@ -171,48 +151,13 @@ void StageManager::ramp_1_to_block()
     }
     else
     {
+        // Transition to next stage when distance sensor is 5cm away from block
         motor.stop();
-        // Transition to next stage when 3000ms has passed
+
         // Update the starting time for the next stage
         current_stage_start_time = millis();
         stage = &stop_and_open_grabber;
     }
-    /*
-    if (millis() - current_stage_start_time <= 1950)
-    {
-        this->motor.Line_following(line_readings, false);
-        distance_sensor->get_distance();
-    }
-    else
-    {
-        motor.stop();
-        // Transition to next stage when 3000ms has passed
-        // Update the starting time for the next stage
-        current_stage_start_time = millis();
-        stage = &stop_and_open_grabber;
-    }
-    */
-    /*
-    if (!this->motor.Line_following(line_readings, false))
-    {
-
-        float distance = distance_sensor->get_distance();
-        // Transition to next stage when distance sensor is 10cm away from block
-        if (distance < 10)
-        {
-            stage = &stop_and_open_grabber;
-        }
-
-        if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 || line_readings == 0b00000101)
-        {
-            // Update the starting time for the next stage
-            current_stage_start_time = millis();
-            stage = &stop_and_open_grabber;
-        }
-    }
-    */
-    // this->motor.turn_180();
-    // delay(10000);
 }
 
 void StageManager::stop_and_open_grabber()
@@ -247,8 +192,6 @@ void StageManager::stop_and_open_grabber()
     current_stage_start_time = millis();
     // Transition to next stage when grabber has been opened
     stage = &pick_block;
-    // servo_manager->open_grabber();
-    // servo_manager->lower_arm();
 }
 
 void StageManager::pick_block()
@@ -260,41 +203,15 @@ void StageManager::pick_block()
     lift_arm();
     delay(1000);
     lower_arm();
-    // delay(1000);
-    // servo_manager->open_grabber();
     delay(500);
+    // Move forward slightly to ensure block is within reach
     motor.go_forward(200);
     motor.stop();
     delay(500);
     close_grabber();
     delay(1000);
     lift_arm();
-    /*
-    // Implement picking logic
-    motor.go_forward();
-    is_red_block = color_sensor->is_red_while_approaching(distance_sensor);
-    motor.stop();
-    // Flash LED
-    if (is_red_block)
-    {
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        delay(6000);
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-    }
-    else
-    {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-        delay(6000);
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-    }
-    // Engage the claw and lift arm
-    servo_manager->close_grabber();
-    servo_manager->lift_arm();
-    */
+
     // Update the starting time for the next stage
     current_stage_start_time = millis();
     // Transition to next stage when block has been picked up
@@ -306,19 +223,11 @@ void StageManager::turning_at_block()
     current_stage = "turning_at_block";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
-    //Turn 180 degrees
-    // this->motor.turn_right_90();
-    // this->motor.go_backward(1550);
-    // this->motor.turn_right();
-    // if (line_readings != 0b00000000){
-    //     this->motor.stop();
-    //     this->motor.go_forward(500);
-    //     current_stage_start_time = millis();
-    //     stage = &ramp_2;
-    // }
+    // Turn 180 degrees
     this->motor.turn_180();
-    // Go forward slightly
+    // Go forward slightly to avoid detecting the second junction
     this->motor.go_forward(200);
+
     // Update the starting time for the next stage
     current_stage_start_time = millis();
     stage = &ramp_2;
@@ -330,7 +239,7 @@ void StageManager::block_to_ramp_2()
     current_stage = "block_to_ramp_2";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
-    // Line following until junction
+    // Line following until third junction
     if (!this->motor.Line_following(line_readings, false))
     {
         // Transition to next stage when it reaches the third junction
@@ -353,7 +262,9 @@ void StageManager::ramp_2()
     // Line following
     if (!this->motor.Line_following(line_readings, false))
     {
-        // Transition to next stage when it reaches the third junction
+        // Detect junction, then go forward slightly
+        // Depending on colour of block, turn left or right
+        // Transition when turn is complete
         if (line_readings == 0b00000110 || line_readings == 0b00000111 || line_readings == 0b00000011 || line_readings == 0b00000101)
         {
             motor.stop();
@@ -383,13 +294,8 @@ void StageManager::ramp_2()
             // Update the starting time for the next stage
             current_stage_start_time = millis();
             stage = &drive_to_zone;
-
-            // stage = &finish;
         }
     }
-    // Detect junction, then go forward slightly
-    // Depending on colour of block, turn left or right
-    // Transition when turn is complete
 }
 
 void StageManager::drive_to_zone()
@@ -397,19 +303,21 @@ void StageManager::drive_to_zone()
     current_stage = "drive_to_zone";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
-    // Line following for x seconds
+    // Line following for x seconds to reach designated drop zone
     int forward_duration;
-    if (is_red_block){
+    if (is_red_block)
+    {
         forward_duration = 3100;
     }
-    else {
+    else
+    {
         forward_duration = 3000;
     }
     if (millis() - current_stage_start_time <= forward_duration)
     {
         this->motor.Line_following(line_readings, false, 110, 0.7);
     }
-    if (millis() - current_stage_start_time >= forward_duration+1)
+    if (millis() - current_stage_start_time >= forward_duration + 1)
     {
         // Stop and drop box
         motor.stop();
@@ -426,13 +334,6 @@ void StageManager::drive_to_zone()
         // Transition when block has been dropped off
         stage = &zone_to_home;
     }
-    /*
-    // Then go forward (timed) to position block in drop off zone
-    this->motor.go_forward(1500);
-    // Drop off block
-    servo_manager->lower_arm();
-    servo_manager->open_grabber();
-    */
 }
 
 void StageManager::zone_to_home()
@@ -464,6 +365,7 @@ void StageManager::finish()
     current_stage = "finish";
     Serial.print("Mode: ");
     Serial.print(this->current_stage + "\n");
+    // Stop motor
     motor.stop();
     digitalWrite(MOVING_LED_PIN, LOW); // Set the moving LED off
     Serial.print("Finish!!");
